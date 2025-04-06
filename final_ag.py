@@ -7,6 +7,7 @@ import streamlit as st
 import pytesseract
 from PIL import Image
 from typing import List, Tuple
+
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.prompts.chat import ChatPromptTemplate
@@ -15,12 +16,11 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.exceptions import OutputParserException
 from huggingface_hub import login
 
-# Set up Groq API key
-os.environ["GROQ_API_KEY"] = "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"
-
-
+# Ensure HuggingFace login
 login(token="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")
 
+# Set up Groq API key
+os.environ["GROQ_API_KEY"] = "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"
 
 # Initialize LLaMA model
 @st.cache_resource
@@ -40,10 +40,7 @@ def load_vectorstore(index_dir: str, _embeddings) -> Tuple[FAISS, FAISS]:
         1 : "./index_generated/Student_details/",
         2 : "./index_generated/Subjects/",
     }
-    index1 = -1
-    for i, dir in index_options.items():
-        if index_dir == dir:
-            index1 = i
+    index1 = next((i for i, dir in index_options.items() if dir == index_dir), -1)
     file = f"index_files{index1}/"
     vectorstore = FAISS.load_local(index_dir+file, embeddings=_embeddings, allow_dangerous_deserialization=True)
     with open(f"{index_dir}/retriever.pkl", "rb") as f:
@@ -68,11 +65,10 @@ def process_query_with_llama(query: str, documents: List[str], messages: List[di
         ("user", f"Previous conversation:\n{history_str}\nQuery: {{query}}\nDocuments:\n{{documents}}"),
         ("system", """
          Your response must be a valid JSON object.
-         You should greet the user if he/she wishes you.
-         You should improvise the extracted content and return the improvised content as answer.
-         I want you to be my assistant in answering all the questions by extraction of the data correctly from the input data.
-        Example format: {{"response": "Your answer here"}}.
-        Strictly avoid any additional text or comments outside the JSON object.
+         You should greet the user if they greet you.
+         Improvise extracted content and return it as the answer.
+         Format: {{"response": "Your answer here"}}.
+         Strictly avoid any text outside the JSON object.
         """),
     ])
     
@@ -108,10 +104,7 @@ def process_query_with_gemma(query: str, messages: List[dict], gemma_model) -> s
     gemma_prompt_template = ChatPromptTemplate.from_messages([
         ("system", "Provide a concise and relevant answer to the user's query."),
         ("user", f"Previous conversation:\n{history_str}\nQuery: {{query}}"),
-        ("system", """"
-         Ensure the response is with quality of amount of content along with brief content; and addresses the query.
-         You must not use the more than 300 tokens for generation.
-         """),
+        ("system", """Ensure the response has quality and is under 300 tokens."""),
     ])
 
     prompt = gemma_prompt_template.format(query=query)
@@ -167,50 +160,38 @@ def main():
         "Subject_doubts": None
     }
 
-    
     selected_index = st.sidebar.selectbox("Select Index Folder", list(index_options.keys()))
-
     uploaded_file = st.sidebar.file_uploader("Upload an image for OCR", type=["jpg", "png", "jpeg"])
-
     query = ""
+
     if st.sidebar.button("🎤 Use Voice Input", key="voice_input"):
         query = recognize_speech()
+    
     st.sidebar.button("Clear Chat History", on_click=clear_chat_history)
-    
+
     st.sidebar.header("Example Questions")
-    example_questions = [
-        "How can I contact the faculty?",
-        "Who is the HOD of CSE-AI&ML?"
-    ]
-    
-    for idx, question in enumerate(example_questions):
+    for idx, question in enumerate(["How can I contact the faculty?", "Who is the HOD of CSE-AI&ML?"]):
         if st.sidebar.button(question, key=f"example_{idx}"):
             query = question
     
     st.title("EduAI: Chatbot for Student Assistance")
     st.subheader("Type your query below and get department-specific answers!")
-    
-    # Handle uploaded image
+
     if uploaded_file:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
             temp_path = temp_file.name
-            temp_file.write(uploaded_file.getbuffer())  # Save uploaded file to temp storage
+            temp_file.write(uploaded_file.getbuffer())
 
         image = Image.open(temp_path)
         st.image(image, caption="Uploaded Image", use_column_width=True)
 
-        # Extract text using OCR
         pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
         extracted_text = extract_text_from_image(image)
         extracted_text += "\n\n Extract the information related to the above extracted data based on Roll No./Name"
-        
         query = extracted_text if extracted_text else query
-
-        # Delete the temporary file after processing
         image.close()
         os.remove(temp_path)
 
-    # Load the selected vector store dynamically
     user_input = st.chat_input("Enter your query:", key="user_query_input")
     query = user_input if user_input else query
 
@@ -218,7 +199,7 @@ def main():
         if selected_index == "Subject_doubts":
             gemma_model = initialize_gemma_model()
             with st.spinner("Processing your query..."):
-                process_query_with_gemma(query, st.session_state.messages,  gemma_model)
+                process_query_with_gemma(query, st.session_state.messages, gemma_model)
                 for message in st.session_state.messages:
                     with st.chat_message(message['role']):
                         st.markdown(message['content'])
@@ -235,11 +216,6 @@ def main():
                 for message in st.session_state.messages:
                     with st.chat_message(message['role']):
                         st.markdown(message['content'])
-            # if documents:
-            #     st.write("### Retrieved Documents:")
-            #     for i, doc in enumerate(documents, 1):
-            #         with st.expander(f"Document {i}"):
-            #             st.write(doc)
 
 if __name__ == "__main__":
     main()
