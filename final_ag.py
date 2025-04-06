@@ -20,7 +20,7 @@ from huggingface_hub import login
 login(token="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")
 
 # Set up Groq API key
-os.environ["GROQ_API_KEY"] = "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"
+os.environ["GROQ_API_KEY"] = "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"
 
 # Initialize LLaMA model
 @st.cache_resource
