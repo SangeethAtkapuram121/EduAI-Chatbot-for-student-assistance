@@ -6,10 +6,10 @@ langchain
 langchain-core
 langchain-community
 langchain-groq
-sentence-transformers
-transformers
-torch
 faiss-cpu
 python-docx
 pandas
 huggingface_hub
+sentence-transformers==2.2.2
+transformers==4.31.0
+torch>=1.13.1
