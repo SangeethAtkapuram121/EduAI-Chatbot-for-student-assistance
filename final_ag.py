@@ -13,6 +13,7 @@ from langchain.prompts.chat import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.exceptions import OutputParserException
+from huggingface_hub import login
 
 # Set up Groq API key
 os.environ["GROQ_API_KEY"] = "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"
