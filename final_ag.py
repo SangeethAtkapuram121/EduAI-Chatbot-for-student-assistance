@@ -205,7 +205,7 @@ def main():
                         st.markdown(message['content'])
         else:
             index_dir = index_options[selected_index]
-            embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+            embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2",     model_kwargs={"device": "cpu"}  )
             vectorstore, retriever_store = load_vectorstore(index_dir, embeddings)
             retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 20})
             results = retriever.get_relevant_documents(query)
