@@ -8,7 +8,7 @@ import pytesseract
 from PIL import Image
 from typing import List, Tuple
 from langchain_community.vectorstores import FAISS
-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.prompts.chat import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from langchain_core.output_parsers import JsonOutputParser
@@ -189,9 +189,6 @@ def main():
     
     st.title("EduAI: Chatbot for Student Assistance")
     st.subheader("Type your query below and get department-specific answers!")
-    
-    user_input = st.chat_input("Enter your query:")
-    query = user_input if user_input else query
     
     # Handle uploaded image
     if uploaded_file:
