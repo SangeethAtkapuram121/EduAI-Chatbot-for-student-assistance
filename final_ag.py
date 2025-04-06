@@ -9,7 +9,7 @@ from PIL import Image
 from typing import List, Tuple
 
 from langchain_community.vectorstores import FAISS
-from langchain.embeddings import HuggingFaceInstructEmbeddings
+from langchain_community.embeddings import HuggingFaceInstructEmbeddings
 from langchain.prompts.chat import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from langchain_core.output_parsers import JsonOutputParser
