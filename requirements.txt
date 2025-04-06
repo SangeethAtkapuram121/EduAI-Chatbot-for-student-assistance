@@ -6,6 +6,7 @@ langchain
 langchain-core
 langchain-community
 langchain-groq
+sentence-transformers
 transformers
 torch
 faiss-cpu
