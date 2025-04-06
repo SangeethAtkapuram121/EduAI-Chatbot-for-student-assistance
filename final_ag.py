@@ -8,7 +8,7 @@ import pytesseract
 from PIL import Image
 from typing import List, Tuple
 from langchain.vectorstores import FAISS
-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
 from langchain.prompts.chat import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from langchain_core.output_parsers import JsonOutputParser
@@ -19,7 +19,7 @@ os.environ["GROQ_API_KEY"] = "gsk_31p4TBgzg4Lhbw3D6CPqWGdyb3FYYyUne0DDm5s76VymxN
 
 from sentence_transformers import SentenceTransformer
 model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-model.save("./local_model")
+model.save("./local_model/all-MiniLM-L6-v2")
 
 
 # Initialize LLaMA model
@@ -227,7 +227,7 @@ def main():
                         st.markdown(message['content'])
         else:
             index_dir = index_options[selected_index]
-            embeddings = HuggingFaceEmbeddings(model_name="./local_model")
+            embeddings = HuggingFaceEmbeddings(model_name="./local_model/all-MiniLM-L6-v2")
             vectorstore, retriever_store = load_vectorstore(index_dir, embeddings)
             retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 20})
             results = retriever.get_relevant_documents(query)
