@@ -1,0 +1,13 @@
+streamlit
+speechrecognition
+pytesseract
+Pillow
+langchain
+langchain-core
+langchain-community
+langchain-groq
+transformers
+torch
+faiss-cpu
+python-docx
+pandas
