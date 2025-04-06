@@ -3,7 +3,7 @@ langchain==0.1.14
 langchain-community==0.0.30
 langchain-core==0.1.45
 langchain-groq==0.0.1
-faiss-cpu==1.7.4
+faiss-cpu
 pytesseract
 Pillow
 speechrecognition
