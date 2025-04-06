@@ -12,3 +12,4 @@ torch
 faiss-cpu
 python-docx
 pandas
+huggingface_hub
