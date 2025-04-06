@@ -17,6 +17,11 @@ from langchain_core.exceptions import OutputParserException
 # Set up Groq API key
 os.environ["GROQ_API_KEY"] = "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"
 
+from sentence_transformers import SentenceTransformer
+model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+model.save("./local_model")
+
+
 # Initialize LLaMA model
 @st.cache_resource
 def initialize_llama_model():
@@ -222,7 +227,7 @@ def main():
                         st.markdown(message['content'])
         else:
             index_dir = index_options[selected_index]
-            embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+            embeddings = HuggingFaceEmbeddings(model_name="./local_model")
             vectorstore, retriever_store = load_vectorstore(index_dir, embeddings)
             retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 20})
             results = retriever.get_relevant_documents(query)
