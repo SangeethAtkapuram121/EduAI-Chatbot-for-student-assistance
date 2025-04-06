@@ -7,8 +7,8 @@ import streamlit as st
 import pytesseract
 from PIL import Image
 from typing import List, Tuple
-from langchain.vectorstores import FAISS
 from langchain_community.vectorstores import FAISS
+from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 from langchain.prompts.chat import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from langchain_core.output_parsers import JsonOutputParser
