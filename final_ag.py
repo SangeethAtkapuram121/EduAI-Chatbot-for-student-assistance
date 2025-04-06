@@ -9,7 +9,7 @@ from PIL import Image
 from typing import List, Tuple
 
 from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain.embeddings import HuggingFaceInstructEmbeddings
 from langchain.prompts.chat import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from langchain_core.output_parsers import JsonOutputParser
@@ -205,7 +205,7 @@ def main():
                         st.markdown(message['content'])
         else:
             index_dir = index_options[selected_index]
-            embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2",model_kwargs={"device": "cpu"}  )
+            embeddings = HuggingFaceInstructEmbeddings(model_name="hkunlp/instructor-xl")
             vectorstore, retriever_store = load_vectorstore(index_dir, embeddings)
             retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 20})
             results = retriever.get_relevant_documents(query)
