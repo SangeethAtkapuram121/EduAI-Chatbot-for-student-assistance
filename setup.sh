@@ -1,8 +1,10 @@
 #!/bin/bash
 
-echo "Downloading and caching SentenceTransformer model..."
+echo "🔄 Installing required HuggingFace model for sentence-transformers..."
 
-# Run a Python command to cache the model
-python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
-
-echo "Model downloaded successfully!"
+# Run Python command to pre-download and cache the model
+python3 -c "
+from sentence_transformers import SentenceTransformer
+model = SentenceTransformer('all-MiniLM-L6-v2')
+print('✅ Model pre-downloaded and cached.')
+"
